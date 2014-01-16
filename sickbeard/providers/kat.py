@@ -304,6 +304,13 @@ class KATProvider(generic.TorrentProvider):
            logger.log("Unable to extract torrent hash from link: " + ex(result.url), logger.ERROR) 
            return False
            
+        seeders_data = re.findall('<span class="u">(.*?)</span>',self.getURL("http://torrentz.eu/"+torrent_hash))
+        torrent_seeders = seeders_data[0] if seeders_data else 0
+
+        if (int(torrent_seeders) < 10):
+           logger.log("Not enough seeders: " + ex(result.url), logger.ERROR) 
+           return False
+           
         try:
             r = requests.get('http://torcache.net/torrent/' + torrent_hash + '.torrent')
         except Exception, e:
